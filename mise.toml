@@ -1,0 +1,11 @@
+[tools]
+python = "3.14"
+uv = "latest"
+
+[tasks.run]
+description = "Run the reconciliation CLI"
+run = "uv run python main.py"
+
+[tasks.test]
+description = "Run unit tests"
+run = "uv run pytest"
