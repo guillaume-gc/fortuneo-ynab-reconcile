@@ -2,6 +2,10 @@
 
 Compare Fortuneo credit card transactions against a YNAB export to find missing entries.
 
+## Why
+
+Fortuneo does not provide a CSV export for credit card transactions. Rather than using an online integration between the bank and YNAB — which raises privacy concerns — this tool reconciles transactions manually using a simple text copy-paste from the Fortuneo portal.
+
 ## Usage
 
 ```bash
