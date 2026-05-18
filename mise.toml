@@ -2,7 +2,7 @@
 python = "3.14"
 uv = "latest"
 
-[tasks.run]
+[tasks.start]
 description = "Run the reconciliation CLI"
 usage = 'flag "--ynab <path>" help="Path to YNAB CSV export"'
 run = "uv run python main.py --ynab ${usage_ynab?}"
