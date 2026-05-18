@@ -4,7 +4,8 @@ uv = "latest"
 
 [tasks.run]
 description = "Run the reconciliation CLI"
-run = "uv run python main.py --ynab"
+usage = 'flag "--ynab <path>" help="Path to YNAB CSV export"'
+run = "uv run python main.py --ynab ${usage_ynab?}"
 
 [tasks.test]
 description = "Run unit tests"
