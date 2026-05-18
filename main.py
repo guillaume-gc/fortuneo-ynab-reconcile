@@ -2,41 +2,54 @@ import argparse
 import csv
 import sys
 from collections import Counter
+from dataclasses import dataclass
 from pathlib import Path
 
 
-def parse_fortuneo(text: str) -> list[tuple[str, float]]:
+@dataclass
+class Transaction:
+    label: str
+    amount: float
+
+
+def parse_fortuneo(text: str) -> list[Transaction]:
     lines = [l.strip() for l in text.strip().splitlines() if l.strip()]
     transactions = []
     for i in range(0, len(lines) - 1, 3):
         label = lines[i]
         amount = abs(float(lines[i + 1].replace(",", ".")))
-        transactions.append((label, amount))
+        transactions.append(Transaction(label=label, amount=amount))
     return transactions
 
 
-def parse_ynab(path: Path) -> list[float]:
-    amounts = []
+def parse_ynab(path: Path) -> list[Transaction]:
+    transactions = []
     with path.open(newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            outflow = row["Outflow"].lstrip("€")
-            amount = float(outflow)
-            if amount > 0:
-                amounts.append(amount)
-    return amounts
+            amount = float(row["Outflow"].lstrip("€"))
+            if amount == 0:
+                continue
+            label = f"{row['Account']}_{row['Date']}_{row['Payee']}_{row['Category Group/Category']}"
+            transactions.append(Transaction(label=label, amount=amount))
+    return transactions
 
 
 def reconcile(
-    fortuneo: list[tuple[str, float]], ynab: list[float]
-) -> tuple[list[tuple[str, float]], list[float]]:
-    ynab_counts = Counter(ynab)
+    fortuneo: list[Transaction], ynab: list[Transaction]
+) -> tuple[list[Transaction], list[Transaction]]:
+    ynab_counts = Counter(t.amount for t in ynab)
     missing = []
-    for label, amount in fortuneo:
-        if ynab_counts[amount] > 0:
-            ynab_counts[amount] -= 1
+    for t in fortuneo:
+        if ynab_counts[t.amount] > 0:
+            ynab_counts[t.amount] -= 1
         else:
-            missing.append((label, amount))
-    ynab_errors = [amount for amount, count in ynab_counts.items() for _ in range(count)]
+            missing.append(t)
+    remaining = Counter(ynab_counts)
+    ynab_errors = []
+    for t in ynab:
+        if remaining[t.amount] > 0:
+            remaining[t.amount] -= 1
+            ynab_errors.append(t)
     return missing, ynab_errors
 
 
@@ -54,10 +67,10 @@ def main() -> None:
 
     if not missing and not ynab_errors:
         print("All transactions matched.")
-    for label, amount in missing:
-        print(f"MISSING: {label} — €{amount:.2f}")
-    for amount in ynab_errors:
-        print(f"YNAB ERROR: €{amount:.2f} has no matching Fortuneo transaction")
+    for t in missing:
+        print(f"MISSING: {t.label} — €{t.amount:.2f}")
+    for t in ynab_errors:
+        print(f"YNAB ERROR: {t.label} — €{t.amount:.2f}")
 
 
 if __name__ == "__main__":
