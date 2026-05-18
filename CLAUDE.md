@@ -12,3 +12,6 @@ Examples: `feat: add ynab parser`, `fix: handle empty paste`, `chore: add fixtur
 
 ## Stack
 - Python 3.11+, stdlib only (no third-party dependencies)
+
+## Tooling
+Use mise for all commands. Prefer defined tasks (`mise run <task>`); for anything else, use `mise exec -- <cmd>`.
