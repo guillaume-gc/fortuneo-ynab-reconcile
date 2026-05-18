@@ -49,39 +49,39 @@ class TestParseYnab:
 
 class TestReconcile:
     def test_all_matched(self):
-        missing, errors = reconcile(fortuneo("equal"), ynab("equal"))
+        missing, orphans = reconcile(fortuneo("equal"), ynab("equal"))
         assert missing == []
-        assert errors == []
+        assert orphans == []
 
     def test_ynab_missing_payee(self):
         # Fortuneo has €200 + €20, YNAB only has €200 → YNAB is missing €20
-        missing, errors = reconcile(fortuneo("equal"), ynab("missing"))
+        missing, orphans = reconcile(fortuneo("equal"), ynab("missing"))
         assert len(missing) == 1
         assert missing[0].amount == 20.0
-        assert errors == []
+        assert orphans == []
 
     def test_ynab_orphan_payee(self):
         # Fortuneo has €200, YNAB has €200 + €20 → YNAB has an orphan €20
-        missing, errors = reconcile(fortuneo("missing"), ynab("equal"))
+        missing, orphans = reconcile(fortuneo("missing"), ynab("equal"))
         assert missing == []
-        assert len(errors) == 1
-        assert errors[0].amount == 20.0
+        assert len(orphans) == 1
+        assert orphans[0].amount == 20.0
 
     def test_duplicates_all_matched(self):
-        missing, errors = reconcile(fortuneo("duplicate"), ynab("duplicate"))
+        missing, orphans = reconcile(fortuneo("duplicate"), ynab("duplicate"))
         assert missing == []
-        assert errors == []
+        assert orphans == []
 
     def test_duplicate_ynab_missing_one(self):
         # Fortuneo has €200 + €20 + €20, YNAB has €200 + €20 → YNAB missing one €20
-        missing, errors = reconcile(fortuneo("duplicate"), ynab("equal"))
+        missing, orphans = reconcile(fortuneo("duplicate"), ynab("equal"))
         assert len(missing) == 1
         assert missing[0].amount == 20.0
-        assert errors == []
+        assert orphans == []
 
     def test_duplicate_ynab_orphan_one(self):
         # Fortuneo has €200 + €20, YNAB has €200 + €20 + €20 → YNAB has orphan €20
-        missing, errors = reconcile(fortuneo("equal"), ynab("duplicate"))
+        missing, orphans = reconcile(fortuneo("equal"), ynab("duplicate"))
         assert missing == []
-        assert len(errors) == 1
-        assert errors[0].amount == 20.0
+        assert len(orphans) == 1
+        assert orphans[0].amount == 20.0

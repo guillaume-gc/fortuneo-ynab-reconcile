@@ -45,12 +45,12 @@ def reconcile(
         else:
             missing.append(t)
     remaining = Counter(ynab_counts)
-    ynab_errors = []
+    ynab_orphans = []
     for t in ynab:
         if remaining[t.amount] > 0:
             remaining[t.amount] -= 1
-            ynab_errors.append(t)
-    return missing, ynab_errors
+            ynab_orphans.append(t)
+    return missing, ynab_orphans
 
 
 def main() -> None:
@@ -63,14 +63,14 @@ def main() -> None:
 
     fortuneo = parse_fortuneo(pasted)
     ynab = parse_ynab(args.ynab_csv)
-    missing, ynab_errors = reconcile(fortuneo, ynab)
+    missing, ynab_orphans = reconcile(fortuneo, ynab)
 
-    if not missing and not ynab_errors:
+    if not missing and not ynab_orphans:
         print("All transactions matched.")
     for t in missing:
         print(f"MISSING: {t.label} — €{t.amount:.2f}")
-    for t in ynab_errors:
-        print(f"YNAB ERROR: {t.label} — €{t.amount:.2f}")
+    for t in ynab_orphans:
+        print(f"YNAB ORPHAN: {t.label} — €{t.amount:.2f}")
 
 
 if __name__ == "__main__":
