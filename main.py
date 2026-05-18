@@ -13,7 +13,7 @@ class Transaction:
 
 
 def parse_fortuneo(text: str) -> list[Transaction]:
-    lines = [l.strip() for l in text.strip().splitlines() if l.strip()]
+    lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
     transactions = []
     for i in range(0, len(lines) - 1, 3):
         label = lines[i]
