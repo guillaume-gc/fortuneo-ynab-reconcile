@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import pytest
-
 from main import Transaction, parse_fortuneo, parse_ynab, reconcile
 
 FIXTURES = Path(__file__).parent / "fixtures"
