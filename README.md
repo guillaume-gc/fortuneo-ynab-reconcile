@@ -5,14 +5,12 @@ Compare Fortuneo credit card transactions against a YNAB export to find missing 
 ## Usage
 
 ```bash
-python main.py --ynab <ynab_csv>
+python main.py -f <fortuneo_txt> -y <ynab_csv>
 ```
-
-Paste your Fortuneo credit card transactions when prompted, then press Ctrl+D.
 
 ## Input formats
 
-**Fortuneo (stdin paste):** copy the transactions from the Fortuneo portal and paste them. Each transaction is three lines: label, amount, currency symbol.
+**Fortuneo (`-f`):** a text file with transactions copied from the Fortuneo portal. Each transaction is three lines: label, amount, currency symbol.
 
 ```
 CARTE XXXX LABEL
@@ -23,12 +21,13 @@ CARTE XXXX LABEL
 €
 ```
 
-**YNAB CSV:** export your account from YNAB and pass the file path as the argument.
+**YNAB (`-y`):** a CSV exported from YNAB.
 
 ## Output
 
 ```
 MISSING: CARTE XXXX LABEL — €200.00
+YNAB ORPHAN: XXX_31.05.2026_XXXX_XXX — €20.00
 ```
 
-Prints one line per transaction found in Fortuneo but not in YNAB. Prints `All transactions matched.` if nothing is missing.
+Prints `All transactions matched.` if nothing is missing.

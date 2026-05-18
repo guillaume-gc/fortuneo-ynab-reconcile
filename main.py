@@ -1,6 +1,5 @@
 import argparse
 import csv
-import sys
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -12,8 +11,8 @@ class Transaction:
     amount: float
 
 
-def parse_fortuneo(text: str) -> list[Transaction]:
-    lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
+def parse_fortuneo(path: Path) -> list[Transaction]:
+    lines = [line.strip() for line in path.read_text().splitlines() if line.strip()]
     transactions = []
     for i in range(0, len(lines) - 1, 3):
         label = lines[i]
@@ -55,14 +54,12 @@ def reconcile(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ynab", dest="ynab_csv", type=Path, required=True)
+    parser.add_argument("-f", "--fortuneo", type=Path, required=True)
+    parser.add_argument("-y", "--ynab", type=Path, required=True)
     args = parser.parse_args()
 
-    print("Paste Fortuneo transactions and press Ctrl+D when done:")
-    pasted = sys.stdin.read()
-
-    fortuneo = parse_fortuneo(pasted)
-    ynab = parse_ynab(args.ynab_csv)
+    fortuneo = parse_fortuneo(args.fortuneo)
+    ynab = parse_ynab(args.ynab)
     missing, ynab_orphans = reconcile(fortuneo, ynab)
 
     if not missing and not ynab_orphans:

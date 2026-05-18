@@ -6,7 +6,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def fortuneo(name: str) -> list[Transaction]:
-    return parse_fortuneo((FIXTURES / f"fortuneo_credit_copy_{name}.txt").read_text())
+    return parse_fortuneo(FIXTURES / f"fortuneo_credit_copy_{name}.txt")
 
 
 def ynab(name: str) -> list[Transaction]:
