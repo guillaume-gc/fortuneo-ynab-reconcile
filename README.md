@@ -5,7 +5,7 @@ Compare Fortuneo credit card transactions against a YNAB export to find missing 
 ## Usage
 
 ```bash
-python main.py <ynab_csv>
+python main.py --ynab <ynab_csv>
 ```
 
 Paste your Fortuneo credit card transactions when prompted, then press Ctrl+D.

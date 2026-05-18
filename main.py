@@ -41,7 +41,7 @@ def reconcile(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("ynab_csv", type=Path)
+    parser.add_argument("--ynab", dest="ynab_csv", type=Path, required=True)
     args = parser.parse_args()
 
     print("Paste Fortuneo transactions and press Ctrl+D when done:")
