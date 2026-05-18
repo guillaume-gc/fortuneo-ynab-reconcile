@@ -28,7 +28,7 @@ def parse_ynab(path: Path) -> list[float]:
 
 def reconcile(
     fortuneo: list[tuple[str, float]], ynab: list[float]
-) -> list[tuple[str, float]]:
+) -> tuple[list[tuple[str, float]], list[float]]:
     ynab_counts = Counter(ynab)
     missing = []
     for label, amount in fortuneo:
@@ -36,7 +36,8 @@ def reconcile(
             ynab_counts[amount] -= 1
         else:
             missing.append((label, amount))
-    return missing
+    ynab_errors = [amount for amount, count in ynab_counts.items() for _ in range(count)]
+    return missing, ynab_errors
 
 
 def main() -> None:
@@ -49,13 +50,14 @@ def main() -> None:
 
     fortuneo = parse_fortuneo(pasted)
     ynab = parse_ynab(args.ynab_csv)
-    missing = reconcile(fortuneo, ynab)
+    missing, ynab_errors = reconcile(fortuneo, ynab)
 
-    if not missing:
+    if not missing and not ynab_errors:
         print("All transactions matched.")
-    else:
-        for label, amount in missing:
-            print(f"MISSING: {label} — €{amount:.2f}")
+    for label, amount in missing:
+        print(f"MISSING: {label} — €{amount:.2f}")
+    for amount in ynab_errors:
+        print(f"YNAB ERROR: €{amount:.2f} has no matching Fortuneo transaction")
 
 
 if __name__ == "__main__":
