@@ -14,6 +14,15 @@ Paste your Fortuneo credit card transactions when prompted, then press Ctrl+D.
 
 **Fortuneo (stdin paste):** copy the transactions from the Fortuneo portal and paste them. Each transaction is three lines: label, amount, currency symbol.
 
+```
+CARTE XXXX LABEL
+-200,00
+€
+CARTE XXXX LABEL
+-20,00
+€
+```
+
 **YNAB CSV:** export your account from YNAB and pass the file path as the argument.
 
 ## Output
