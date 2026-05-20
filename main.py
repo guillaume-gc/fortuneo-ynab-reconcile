@@ -1,5 +1,6 @@
 import argparse
 import csv
+import json
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -54,12 +55,25 @@ def reconcile(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--fortuneo", type=Path, required=True)
-    parser.add_argument("-y", "--ynab", type=Path, required=True)
+    parser.add_argument("-c", "--config", type=Path, default=Path("config.json"))
+    parser.add_argument("-f", "--fortuneo", type=Path)
+    parser.add_argument("-y", "--ynab", type=Path)
     args = parser.parse_args()
 
-    fortuneo = parse_fortuneo(args.fortuneo)
-    ynab = parse_ynab(args.ynab)
+    config: dict = {}
+    if args.config.exists():
+        config = json.loads(args.config.read_text())
+
+    fortuneo_path: Path = args.fortuneo or (Path(config["fortuneo"]) if "fortuneo" in config else None)
+    ynab_path: Path = args.ynab or (Path(config["ynab"]) if "ynab" in config else None)
+
+    if not fortuneo_path:
+        parser.error("--fortuneo is required (or set 'fortuneo' in config)")
+    if not ynab_path:
+        parser.error("--ynab is required (or set 'ynab' in config)")
+
+    fortuneo = parse_fortuneo(fortuneo_path)
+    ynab = parse_ynab(ynab_path)
     missing, ynab_orphans = reconcile(fortuneo, ynab)
 
     if not missing and not ynab_orphans:
