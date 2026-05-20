@@ -55,7 +55,7 @@ def reconcile(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config", type=Path, default=Path("config.json"))
+    parser.add_argument("-c", "--config", type=Path, default=Path("config.local.json"))
     parser.add_argument("-f", "--fortuneo", type=Path)
     parser.add_argument("-y", "--ynab", type=Path)
     args = parser.parse_args()
