@@ -64,8 +64,8 @@ def main() -> None:
     if args.config.exists():
         config = json.loads(args.config.read_text())
 
-    fortuneo_path: Path = args.fortuneo or (Path(config["fortuneo"]) if "fortuneo" in config else None)
-    ynab_path: Path = args.ynab or (Path(config["ynab"]) if "ynab" in config else None)
+    fortuneo_path: Path | None = args.fortuneo or (Path(config["fortuneo"]) if "fortuneo" in config else None)
+    ynab_path: Path | None = args.ynab or (Path(config["ynab"]) if "ynab" in config else None)
 
     if not fortuneo_path:
         parser.error("--fortuneo is required (or set 'fortuneo' in config)")
